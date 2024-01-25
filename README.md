@@ -1,8 +1,12 @@
-#Description
+# Description
 
-An exercice to learn Arduboy programming with sprite animation.
+This is an exercice to help me learn [Arduboy](https://www.arduboy.com) programming with sprite animation.
+I took inspiration from the impressive [MicroCity](https://github.com/jhhoward/MicroCity). 
 
-This is inspired from the [https://en.wikipedia.org/wiki/Sokoban](Sokoban)
-game. A working implementation for the Arduboy exists already and can be found
-[https://github.com/rprouse/Arduban](here). This project uses the levels from 
-[https://github.com/rprouse/Arduban](rprouse).
+The game is a version of [Sokoban](https://en.wikipedia.org/wiki/Sokoban). 
+Nothing new. A working implementation for the Arduboy exists already and can be found
+[here](https://github.com/rprouse/Arduban). This project uses the levels from 
+[rprouse](https://github.com/rprouse/Arduban).
+
+The same game can be played as an Arduboy simulation on the desktop 
+with the [SDL2 library](https://github.com/libsdl-org/SDL/tree/SDL2) if installed.
