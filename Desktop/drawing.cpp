@@ -1,12 +1,9 @@
 #include <SDL.h>
 #include <stdio.h>
-/* #include <sstream> */
-/* #include <iomanip> */
 #include "../Asokoban/defines.h"
 #include "../Asokoban/controller.h"
 /* #include "Game.h" */
 /* #include "Interface.h" */
-/* #include "lodepng.h" */
 /* #include "Simulation.h" */
 
 #define DISPLAY_WIDTH 128
@@ -35,27 +32,27 @@ void DrawPixel(uint8_t x, uint8_t y, uint8_t colour) {
 
 void DrawBitmap(const uint8_t* data, uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 {
-	for (int j = 0; j < h; j++)
-	{
-		for (int i = 0; i < w; i++)
-		{
-			int blockX = i / 8;
-			int blockY = j / 8;
-			int blocksPerWidth = w / 8;
-			int blockIndex = blockY * blocksPerWidth + blockX;
-			uint8_t pixels = data[blockIndex * 8 + i % 8];
-			uint8_t mask = 1 << (j % 8);
-			if (pixels & mask)
-			{
-				DrawPixel(x + i, y + j, 1);
-			}
-		}
-	}
+  for (int j = 0; j < h; j++)
+  {
+    for (int i = 0; i < w; i++)
+    {
+      int blockX = i / 8;
+      int blockY = j / 8;
+      int blocksPerWidth = w / 8;
+      int blockIndex = blockY * blocksPerWidth + blockX;
+      uint8_t pixels = data[blockIndex * 8 + i % 8];
+      uint8_t mask = 1 << (j % 8);
+      if (pixels & mask)
+      {
+        DrawPixel(x + i, y + j, 1);
+      }
+    }
+  }
 }
 
 uint8_t GetInput()
 {
-	return InputMask;
+  return InputMask;
 }
 
 int main(int argc, char* argv[])
@@ -63,22 +60,22 @@ int main(int argc, char* argv[])
   bool leftmousebuttondown;
   int mousex, mousey;
 
-	SDL_Init(SDL_INIT_VIDEO);
+  SDL_Init(SDL_INIT_VIDEO);
 
-	SDL_CreateWindowAndRenderer(DISPLAY_WIDTH * ZOOM_SCALE, DISPLAY_HEIGHT * ZOOM_SCALE, 
+  SDL_CreateWindowAndRenderer(DISPLAY_WIDTH * ZOOM_SCALE, DISPLAY_HEIGHT * ZOOM_SCALE,
       SDL_WINDOW_RESIZABLE, &AppWindow, &AppRenderer);
-	SDL_RenderSetLogicalSize(AppRenderer, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+  SDL_RenderSetLogicalSize(AppRenderer, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
-	/* InitGame(); */
-	
-	bool running = true;
+  /* InitGame(); */
+
+  bool running = true;
   InputMask = 0;
 
-	while (running)
-	{
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
+  while (running)
+  {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+      switch (event.type) {
 
         case SDL_MOUSEBUTTONUP:
           if (event.button.button == SDL_BUTTON_LEFT) {
@@ -109,7 +106,7 @@ int main(int argc, char* argv[])
 
         case SDL_KEYDOWN:
           switch (event.key.keysym.sym) {
-            
+
             case SDLK_a:
               InputMask |= A_BUTTON;
               break;
@@ -138,7 +135,7 @@ int main(int argc, char* argv[])
 
         case SDL_KEYUP:
           switch (event.key.keysym.sym) {
-            
+
             case SDLK_a:
               InputMask |= A_BUTTON;
               break;
@@ -168,15 +165,15 @@ int main(int argc, char* argv[])
         }
       }
 
-		SDL_RenderPresent(AppRenderer);
+    SDL_RenderPresent(AppRenderer);
 
     // FrameRate
-		SDL_Delay(1000 / 20);
+    SDL_Delay(1000 / 20);
 
-	}
+  }
 
   cleanup();
-	return 0;
+  return 0;
 }
 
 void cleanup() {
@@ -184,3 +181,5 @@ void cleanup() {
   SDL_DestroyWindow(AppWindow);
   SDL_Quit();
 }
+
+// vim: tabstop=2:softtabstop=2:shiftwidth=2:expandtab:filetype=cpp
