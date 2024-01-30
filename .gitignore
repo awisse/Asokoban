@@ -1,1 +1,4 @@
-drawing
+build
+ardusdl
+*.o
+*.a
