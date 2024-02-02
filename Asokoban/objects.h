@@ -1,11 +1,15 @@
 // Wall, Target, Box, Box on Target
-
-enum Piece {
-  Floor,
+#pragma once
+/* typedef enum Piece Piece; */
+typedef enum {
+  Empty,
   Wall,
   Worker,
-  Box,
-  Target,
   WorkerOnTarget,
-  BoxOnTarget
-};
+  Box,
+  BoxOnTarget,
+  Target,
+  Floor
+} Piece;
+
+// vim:ft=cpp

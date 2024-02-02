@@ -5,11 +5,11 @@
 #include <time.h>
 #include <iostream>
 #include "EEPROM.h"
-#include "../Asokoban/Defines.h"
-#include "../Asokoban/Platform.h"
-#include "../Asokoban/Controller.h"
-#include "../Asokoban/Game.h"
-#include "../Asokoban/Font.h"
+#include "../Asokoban/defines.h"
+#include "../Asokoban/platform.h"
+#include "../Asokoban/controller.h"
+#include "../Asokoban/game.h"
+/* #include "../Asokoban/Font.h" */
 
 #define ZOOM_SCALE 4
 
@@ -230,7 +230,7 @@ int Random(int i0, int i1) {
   return i0 + r;
 }
 
-unsigned long Millis() {
+unsigned long Platform::Millis() {
   struct timespec ts;
   unsigned long ms;
 

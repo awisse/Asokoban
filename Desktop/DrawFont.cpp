@@ -1,6 +1,6 @@
-#include "../2048-Arduboy/Defines.h"
-#include "../2048-Arduboy/Platform.h"
-#include "../2048-Arduboy/Font.h"
+#include "../Asokoban/defines.h"
+#include "../Asokoban/platform.h"
+#include "../Asokoban/font.h"
 
 struct CharPosition {
   uint8_t line;

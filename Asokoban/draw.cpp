@@ -1,12 +1,38 @@
+#include "defines.h"
+#include "objects.h"
 #include "draw.h"
+#include "platform.h"
+#include "sprites.h"
 
-void Clear() {
-  FillRect(0, 0, WIDTH, HEIGHT, BLACK);
+const uint16_t sprite_ix[] PROGMEM = {
+  0, 0x20, 0x48, 0x68, 0x10, 0x08, 0x18, 0};
+
+void DrawBoard(Piece board[HDIM][VDIM]) {
+  uint8_t row, column;
+  uint16_t ix;
+  Piece tile;
+
+  for (column = 0; column < HDIM; column++)
+    for (row = 0; row < VDIM; row++) {
+      tile = board[column][row];
+      switch (tile) {
+        case Worker:
+          ix = sprite_ix[tile];
+          break;
+        default:
+          ix = sprite_ix[tile];
+      }
+      Platform::DrawBitmap(&sprites[ix],
+        column * TILE_SZ, row * TILE_SZ, TILE_SZ, TILE_SZ, COLOUR_WHITE);
+    }
 }
+
 void EraseTile(int16_t x, int16_t y) {
-  FillRect(x, y, TILE_SZ, TILE_SZ, BLACK);
+  Platform::DrawFilledRect(x, y, TILE_SZ, TILE_SZ, COLOUR_BLACK);
 }
 
-void Draw() {
+void Draw(Piece board[HDIM][VDIM]) {
+  Platform::Clear();
+  DrawBoard(board);
 
 }
