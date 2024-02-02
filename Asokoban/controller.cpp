@@ -67,7 +67,7 @@ void HandleInput() {
 
   uint8_t buttons = DebouncedButtons();
   if (buttons & (INPUT_UP | INPUT_DOWN | INPUT_LEFT | INPUT_RIGHT)) {
-    ExecuteMove((Direction)(buttons>>4));
+    ExecuteMove(buttons);
   }
 }
 

@@ -1,13 +1,13 @@
 #include "defines.h"
-#include "objects.h"
+#include "globals.h"
 #include "draw.h"
 #include "platform.h"
 #include "sprites.h"
 
 const uint16_t sprite_ix[] PROGMEM = {
-  0, 0x20, 0x48, 0x68, 0x10, 0x08, 0x18, 0};
+  0, 0x20, 0x30, 0x50, 0x10, 0x08, 0x18, 0};
 
-void DrawBoard(Piece board[HDIM][VDIM]) {
+void DrawBoard(Piece board[HDIM][VDIM], Player worker) {
   uint8_t row, column;
   uint16_t ix;
   Piece tile;
@@ -17,7 +17,8 @@ void DrawBoard(Piece board[HDIM][VDIM]) {
       tile = board[column][row];
       switch (tile) {
         case Worker:
-          ix = sprite_ix[tile];
+        case WorkerOnTarget:
+          ix = sprite_ix[tile] + (uint16_t)worker.direction * 8;
           break;
         default:
           ix = sprite_ix[tile];
@@ -31,8 +32,8 @@ void EraseTile(int16_t x, int16_t y) {
   Platform::DrawFilledRect(x, y, TILE_SZ, TILE_SZ, COLOUR_BLACK);
 }
 
-void Draw(Piece board[HDIM][VDIM]) {
+void Draw(Piece board[HDIM][VDIM], Player worker) {
   Platform::Clear();
-  DrawBoard(board);
+  DrawBoard(board, worker);
 
 }
