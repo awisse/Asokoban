@@ -16,7 +16,7 @@
 SDL_Window* AppWindow;
 SDL_Renderer* AppRenderer;
 EEPROM eeprom;
-time_t StartTime;
+unsigned long StartTime;
 #ifdef _DEBUG
 int counter;
 #endif
@@ -201,7 +201,23 @@ void Platform::DebugPrint(uint16_t value) {
   }
 }
 
-void Platform::DebugPrint(char* text) {
+void Platform::DebugPrint(unsigned long value) {
+  std::cout << value << ":";
+  std::cout.flush();
+  if (++counter % 8 == 0) {
+    std::cout << "\n";
+  }
+}
+
+void Platform::DebugPrint(float value) {
+  std::cout << value << ":";
+  std::cout.flush();
+  if (++counter % 8 == 0) {
+    std::cout << "\n";
+  }
+}
+
+void Platform::DebugPrint(const char* text) {
   std::cout << text << "\n";
 }
 #endif
@@ -262,16 +278,22 @@ unsigned long Platform::Millis() {
   if (clock_gettime(CLOCK_REALTIME, &ts)) {
     std::cerr << "Can't get clock_gettime" << "\n";
   }
-
-  ms = 1000 * (ts.tv_sec - StartTime) + ts.tv_nsec / 1000000;
+  ms = (1000 * ts.tv_sec  + ts.tv_nsec / 1000000) - StartTime;
   return ms;
 }
 
 // Local Functions
 //
 void Initialize() {
+  struct timespec ts;
+  // Initialize timer from start of program
+  if (clock_gettime(CLOCK_REALTIME, &ts)) {
+    std::cerr << "Can't get clock_gettime" << "\n";
+  }
+  StartTime = 1000 * ts.tv_sec + ts.tv_nsec / 1000000;
+  // Initialize game
   InitGame();
-  StartTime = time(NULL);
+  // Initialize random number generator.
   srandom(StartTime);
 }
 
