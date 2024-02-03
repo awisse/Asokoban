@@ -144,8 +144,16 @@ void ExecuteMove(uint8_t button) {
   Platform::DebugPrint(worker.x);
   Platform::DebugPrint(worker.y);
 #endif
-  board[from_x][from_y] = Floor;
-  board[worker.x][worker.y] = Worker;
+  if (board[from_x][from_y] == WorkerOnTarget) {
+    board[from_x][from_y] = Target;
+  } else {
+    board[from_x][from_y] = Floor;
+  }
+  if (board[worker.x][worker.y] == Target) {
+    board[worker.x][worker.y] = WorkerOnTarget;
+  } else {
+    board[worker.x][worker.y] = Worker;
+  }
   MoveWorker();
   GameState.modified = true;
 }
