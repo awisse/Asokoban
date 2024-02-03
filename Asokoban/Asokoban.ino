@@ -1,18 +1,20 @@
 #include <Arduboy2.h>
 #include "game.h"
 #include "controller.h"
+#include "defines.h"
 #include "platform.h"
 
 Arduboy2Base arduboy;
-
+int counter;
 
 void setup() {
   // put your setup code here, to run once:
   arduboy.begin();
   arduboy.setFrameRate(20);
 
-#ifdef DEBUG
+#ifdef _DEBUG
   Serial.begin(9600);
+  counter = 0;
 #endif
 
   InitGame();
@@ -30,6 +32,7 @@ void loop() {
 // platform.h
 uint8_t Platform::ButtonState() {
   uint8_t buttons = arduboy.buttonsState();
+  return buttons;
   // Debounce
 }
 
@@ -52,4 +55,17 @@ void Platform::Clear() {
 unsigned long Platform::Millis() {
   return millis();
 }
+
+#ifdef _DEBUG
+void Platform::DebugPrint(uint16_t value) {
+  Serial.print(value);
+  if (++counter % 8 == 0) {
+    Serial.println();
+  }
+}
+
+void Platform::DebugPrint(char* text) {
+  Serial.println(text);
+}
+#endif
 // vim: tabstop=2:softtabstop=2:shiftwidth=2:expandtab:filetype=arduino

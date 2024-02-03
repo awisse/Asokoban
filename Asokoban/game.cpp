@@ -27,6 +27,7 @@ void InitGame() {
   GameState.running = true;
   GameState.animating = false;
   GameState.level = 0;
+  GameState.modified = true;
   AnimationStep = 0;
 
   Platform::Clear();
@@ -45,7 +46,10 @@ void StepGame() {
     HandleInput();    
   }
 
-  Draw(board, worker);
+  if (GameState.modified) {
+    Draw(board, worker);
+    GameState.modified = false;
+  }
 }
 
 void LoadGame() {
@@ -85,16 +89,18 @@ void LoadLevel() {
     rpt = (c >> 4) + 1;
     for (j = 0; j < rpt; j++) {
       p = (Piece)(c & 0x07);
-      board[column++][row] = p;
+      board[column][row] = p;
       if ((p == Worker) || (p == WorkerOnTarget)) {
         worker.x = column;
         worker.y = row;
         worker.direction = up;
       }
+      column++;
     }
     row += column >= 0x10 ? 1 : 0;
     column %= 0x10;
   }
+  GameState.modified = true;
 }
 
 void GameOver() {
@@ -109,7 +115,6 @@ void ExecuteMove(uint8_t button) {
   
   uint16_t from_x = worker.x; 
   uint16_t from_y = worker.y;
-
   // For starters: Board drawing
   switch (button) {
     case INPUT_UP: 
@@ -132,11 +137,18 @@ void ExecuteMove(uint8_t button) {
       if ((worker.x < HDIM-1) && 
           (board[from_x+1][from_y] != Wall)) worker.x++;
   }
+#ifdef _DEBUG
+  Platform::DebugPrint(button);
+  Platform::DebugPrint(from_x);
+  Platform::DebugPrint(from_y);
+  Platform::DebugPrint(worker.x);
+  Platform::DebugPrint(worker.y);
+#endif
   board[from_x][from_y] = Floor;
   board[worker.x][worker.y] = Worker;
   MoveWorker();
+  GameState.modified = true;
 }
-
 
 void MoveWorker() { // Universal move in all directions
   // Move tiles in any direction
@@ -151,4 +163,4 @@ void BoardMask(Piece mask) {
     *(*board + i) = mask;
   }
 }
-// vim: tabstop=2:softtabstop=2:shiftwidth=2:expandtab
+// vim:fdm=syntax:tabstop=2:softtabstop=2:shiftwidth=2:expandtab

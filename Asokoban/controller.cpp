@@ -3,11 +3,6 @@
 #include "defines.h"
 #include "platform.h"
 
-#ifdef _DEBUG
-#include "debug.h"
-#endif
-
-
 uint8_t previousButtons, currentButtons;
 uint8_t DebouncedButtons();
 

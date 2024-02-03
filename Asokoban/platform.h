@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "defines.h"
 
 class Platform
 {
@@ -28,6 +29,12 @@ public:
 	/* static void SetAudioEnabled(bool isEnabled); */
 
 	/* static void ExpectLoadDelay(); */
+
+  // Debug
+#ifdef _DEBUG
+  static void DebugPrint(uint16_t value);
+  static void DebugPrint(char* text);
+#endif
 	
 };
 // vim:ft=cpp

@@ -4,8 +4,8 @@
 #include "platform.h"
 #include "sprites.h"
 
-const uint16_t sprite_ix[] PROGMEM = {
-  0, 0x20, 0x30, 0x50, 0x10, 0x08, 0x18, 0};
+const uint16_t sprite_ix[] = {
+  0, 0x20, 0x30, 0xB0, 0x10, 0x08, 0x18, 0};
 
 void DrawBoard(Piece board[HDIM][VDIM], Player worker) {
   uint8_t row, column;
@@ -15,14 +15,20 @@ void DrawBoard(Piece board[HDIM][VDIM], Player worker) {
   for (column = 0; column < HDIM; column++)
     for (row = 0; row < VDIM; row++) {
       tile = board[column][row];
+      ix = sprite_ix[tile];
       switch (tile) {
         case Worker:
+          ix += (uint16_t)worker.direction * 0x20;
+          break;
         case WorkerOnTarget:
-          ix = sprite_ix[tile] + (uint16_t)worker.direction * 8;
+          ix += (uint16_t)worker.direction * 8;
           break;
         default:
-          ix = sprite_ix[tile];
+          {}
       }
+/* #ifdef 0 */
+/*       Platform::DebugPrint(ix); */
+/* #endif */
       Platform::DrawBitmap(&sprites[ix],
         column * TILE_SZ, row * TILE_SZ, TILE_SZ, TILE_SZ, COLOUR_WHITE);
     }
@@ -37,3 +43,5 @@ void Draw(Piece board[HDIM][VDIM], Player worker) {
   DrawBoard(board, worker);
 
 }
+
+// vim:fdm=syntax

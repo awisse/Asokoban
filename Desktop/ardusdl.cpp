@@ -17,6 +17,9 @@ SDL_Window* AppWindow;
 SDL_Renderer* AppRenderer;
 EEPROM eeprom;
 time_t StartTime;
+#ifdef _DEBUG
+int counter;
+#endif
 
 // Replicate the Arduboy screen buffer here:
 uint8_t InputMask = 0;
@@ -181,6 +184,21 @@ void Platform::FillScreen(uint8_t colour) {
 void Platform::Clear() {
   FillScreen(COLOUR_BLACK);
 }
+
+#ifdef _DEBUG
+void Platform::DebugPrint(uint16_t value) {
+  std::cout << value << ":";
+  std::cout.flush();
+  if (++counter % 8 == 0) {
+    std::cout << "\n";
+  }
+}
+
+void Platform::DebugPrint(char* text) {
+  std::cout << text << "\n";
+}
+#endif
+  
 
 // TODO: EEPROM
 uint8_t Platform::ToEEPROM(uint8_t *bytes, int offset, int sz) {

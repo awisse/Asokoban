@@ -15,7 +15,7 @@
 //#define pgm_read_ptr pgm_read_word
 #endif
 
-#define _DEBUG
+/* #define _DEBUG */
 
 // Board Dimensions
 #define HDIM 16
