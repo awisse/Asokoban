@@ -8,7 +8,9 @@
 
 
 // Local Functions
-void EraseTile(int16_t x, int16_t y);
 void Draw(Piece board[HDIM][VDIM], Player worker);
+void DrawWin(uint16_t moves, unsigned long time);
+void DrawStars(unsigned long time);
+void DroolScreen(unsigned long time);
 //
 // vim:ft=cpp

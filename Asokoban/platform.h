@@ -9,6 +9,7 @@ public:
 	static uint8_t ButtonState();
   // Drawing
   static void PutPixel(uint8_t x, uint8_t y, uint8_t colour);
+  static uint8_t GetPixel(uint8_t x, uint8_t y);
   static void DrawBitmap(const uint8_t* bitmap, int16_t x, int16_t y,
                   uint8_t w, uint8_t h, uint8_t colour);
   static void DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t colour);

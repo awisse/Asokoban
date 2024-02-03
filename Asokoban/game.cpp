@@ -12,12 +12,14 @@ GameStateStruct GameState;
 Player worker;
 uint8_t AnimationStep;
 Piece board[HDIM][VDIM];
+uint8_t BoxCount; // How many boxes not on target
 
 /* void InitLevels(); */
 uint16_t FindLevel();
 void LoadLevel();
-void MoveWorker();
+bool MoveBox(uint16_t from_x, uint16_t from_y);
 void UpdateAnimation();
+void Winning();
 void GameOver();
 void BoardMask(Piece mask);
 
@@ -28,6 +30,8 @@ void InitGame() {
   GameState.animating = false;
   GameState.level = 0;
   GameState.modified = true;
+  GameState.start = Platform::Millis();
+  GameState.moves = 0;
   AnimationStep = 0;
 
   Platform::Clear();
@@ -49,6 +53,11 @@ void StepGame() {
   if (GameState.modified) {
     Draw(board, worker);
     GameState.modified = false;
+  }
+
+  if (BoxCount == 0) {
+    GameState.running = false;
+    Winning();
   }
 }
 
@@ -94,6 +103,8 @@ void LoadLevel() {
         worker.x = column;
         worker.y = row;
         worker.direction = up;
+      } else if (p == Box) {
+        BoxCount++;
       }
       column++;
     }
@@ -107,6 +118,12 @@ void GameOver() {
   GameState.running = false;
 }
 
+void Winning () {
+  // Show result.
+  //
+  // 
+}
+
 void UpdateAnimation() {
 
 }
@@ -115,53 +132,109 @@ void ExecuteMove(uint8_t button) {
   
   uint16_t from_x = worker.x; 
   uint16_t from_y = worker.y;
-  // For starters: Board drawing
+  uint16_t delta_x = 0, delta_y = 0;
+
   switch (button) {
     case INPUT_UP: 
       worker.direction=up;
-      if ((worker.y > 0) && 
-          (board[from_x][from_y-1] != Wall)) worker.y--;
+      delta_y = -1;
       break;
     case INPUT_LEFT: 
       worker.direction=left;
-      if ((worker.x > 0) && 
-          (board[from_x-1][from_y] != Wall)) worker.x--;
+      delta_x = -1;
       break;
     case INPUT_DOWN: 
       worker.direction=down;
-      if ((worker.y < VDIM-1) && 
-          (board[from_x][from_y+1] != Wall)) worker.y++;
+      delta_y = 1;
       break;
     case INPUT_RIGHT: 
       worker.direction=right;
-      if ((worker.x < HDIM-1) && 
-          (board[from_x+1][from_y] != Wall)) worker.x++;
+      delta_x = 1;
   }
+  uint16_t to_x = from_x + delta_x;
+  uint16_t to_y = from_y + delta_y;
+
 #ifdef _DEBUG
-  Platform::DebugPrint(button);
-  Platform::DebugPrint(from_x);
-  Platform::DebugPrint(from_y);
-  Platform::DebugPrint(worker.x);
-  Platform::DebugPrint(worker.y);
 #endif
-  if (board[from_x][from_y] == WorkerOnTarget) {
-    board[from_x][from_y] = Target;
-  } else {
-    board[from_x][from_y] = Floor;
+
+  // Check whether the move will proceed
+  // We are hitting a wall: No move possible.
+  if ((to_x < 0) || (to_x > HDIM-1) || (to_y < 0) || (to_y > VDIM-1)) {
+    return;
   }
-  if (board[worker.x][worker.y] == Target) {
-    board[worker.x][worker.y] = WorkerOnTarget;
-  } else {
-    board[worker.x][worker.y] = Worker;
+  // Check whether there are obstacles: Wall, Box, BoxOnTarget
+  bool moved = true;
+  // Decide which piece will be on the target worker position
+  Piece to_piece = board[to_x][to_y];
+  switch (to_piece) {
+    case Wall:
+      moved = false;
+      break;
+    case Target:
+      to_piece = WorkerOnTarget;
+      break;
+    case BoxOnTarget:
+    case Box:
+      moved = MoveBox(to_x, to_y);
+      if (to_piece == BoxOnTarget) {
+        to_piece = WorkerOnTarget;
+        break;
+      }
+    default:
+      to_piece = Worker;
   }
-  MoveWorker();
+  // Nothing moves if the movement is blocked by a wall or box
+  if (moved) {
+    worker.x = to_x;
+    worker.y = to_y;
+    board[to_x][to_y] = to_piece;
+    switch (board[from_x][from_y]) {
+      case BoxOnTarget:
+        BoxCount++;
+      case WorkerOnTarget:
+        board[from_x][from_y] = Target;
+        break;
+      default:
+        board[from_x][from_y] = Floor;
+    }
+    GameState.moves++;
+  }
   GameState.modified = true;
 }
 
-void MoveWorker() { // Universal move in all directions
-  // Move tiles in any direction
-  // Reminder: board[x-axis][y-axis]
+bool MoveBox(uint16_t from_x, uint16_t from_y) { 
+  uint16_t delta_x=0, delta_y=0;
+  uint16_t to_x, to_y;
 
+  switch (worker.direction) {
+    case up:
+      delta_y = -1;
+      break;
+    case down:
+      delta_y = 1;
+      break;
+    case left:
+      delta_x = -1;
+      break;
+    case right:
+      delta_x = 1;
+  }
+  to_x = from_x + delta_x;
+  to_y = from_y + delta_y;
+  if ((to_x > 0) && (to_x < HDIM - 1) &&
+      (to_y > 0) && (to_y < VDIM - 1) &&
+      (board[to_x][to_y] != Wall) &&
+      (board[to_x][to_y] != Box) &&
+      (board[to_x][to_y] != BoxOnTarget)) {
+    if (board[to_x][to_y] == Target) {
+      board[to_x][to_y] = BoxOnTarget;
+      BoxCount--;
+    } else {
+      board[to_x][to_y] = Box;
+    }
+    return true;
+  }
+  return false;
 }
 
 void BoardMask(Piece mask) {

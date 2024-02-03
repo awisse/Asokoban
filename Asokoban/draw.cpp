@@ -34,10 +34,6 @@ void DrawBoard(Piece board[HDIM][VDIM], Player worker) {
     }
 }
 
-void EraseTile(int16_t x, int16_t y) {
-  Platform::DrawFilledRect(x, y, TILE_SZ, TILE_SZ, COLOUR_BLACK);
-}
-
 void Draw(Piece board[HDIM][VDIM], Player worker) {
   Platform::Clear();
   DrawBoard(board, worker);

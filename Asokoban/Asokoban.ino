@@ -40,6 +40,10 @@ void Platform::PutPixel(uint8_t x, uint8_t y, uint8_t colour) {
   arduboy.drawPixel(x, y, colour);
 }
 
+uint8_t Platform::GetPixel(uint8_t x, uint8_t y) {
+  return arduboy.get(x, y);
+}
+
 void Platform::DrawBitmap(const uint8_t* bmp, int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t colour) {
   arduboy.drawBitmap(x, y, bmp, w, h, colour);
 }

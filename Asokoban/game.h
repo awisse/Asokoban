@@ -8,7 +8,7 @@ typedef struct {
   bool modified;  // True after board is modified. 
   bool animating; // True if animation running. No input processed.
   uint16_t level; // Game level
-  unsigned long elapsed; // Time elapsed since level started
+  unsigned long start; // Milliseconds at start
   uint16_t moves; // Number of moves since level started
   bool saved;
 } GameStateStruct;
