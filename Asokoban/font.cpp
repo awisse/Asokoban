@@ -44,6 +44,10 @@ uint16_t Font::CharIdx(const uint8_t c) {
       idx = FONT_EACUTE_INDEX;
       break;
 
+    case 0xAA:
+      idx = FONT_ECIRCONFLEX_INDEX;
+      break;
+
     case 0x3A:
       idx = FONT_COLON_INDEX;
       break;

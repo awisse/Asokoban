@@ -65,8 +65,9 @@ void DrawStars(uint8_t set) {
   }
 }
 
-void DrawResult(const uint8_t* text, const uint16_t level,
-    const uint16_t moves, const unsigned long elapsed) {
+void DrawResult(const uint8_t* text, const uint8_t row,
+    const uint16_t level, const uint16_t moves,
+    const unsigned long elapsed) {
   /* Draw a box in the middle of the screen with :
      Text on top
      Pas: xxx   Temps: xxx
@@ -80,16 +81,19 @@ void DrawResult(const uint8_t* text, const uint16_t level,
   // Text x-position
   x = (DISPLAY_WIDTH - w) / 2;
 
+  // Make room on screen
+  Platform::DrawFilledRect(x - 1, row * 8, w + 2, 31, COLOUR_BLACK);
+
   // Draw Text
-  font.PrintString(text, 4, x);
+  font.PrintString(text, row, x);
 
   // Draw Result
-  font.PrintString(U8"Niveau:", 5, x);
-  font.PrintInt(level, 5, x + 8 * font.glyphWidth);
-  font.PrintString(U8"Pas:", 6, x);
-  font.PrintInt(moves, 6, x + 8 * font.glyphWidth);
-  font.PrintString(U8"Temps:", 7, x);
-  font.PrintString(time, 7, x + 8 * font.glyphWidth);
+  font.PrintString(U8"Niveau:", row + 1, x);
+  font.PrintInt(level, row + 1, x + 8 * font.glyphWidth);
+  font.PrintString(U8"Pas:", row + 2, x);
+  font.PrintInt(moves, row + 2, x + 8 * font.glyphWidth);
+  font.PrintString(U8"Temps:", row + 3, x);
+  font.PrintString(time, row + 3, x + 8 * font.glyphWidth);
 
 }
 

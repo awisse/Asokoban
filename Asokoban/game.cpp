@@ -12,6 +12,7 @@ GameStateStruct GameState;
 Player worker;
 uint8_t AnimationStep;
 Piece board[HDIM][VDIM];
+bool stuck; // True if box stuck in corner
 uint8_t BoxCount; // How many boxes not on target
 
 /* void InitLevels(); */
@@ -21,6 +22,8 @@ bool MoveBox(uint16_t from_x, uint16_t from_y);
 void UpdateAnimation();
 void Winning();
 void GameOver();
+// Check whether a box is in a corner:
+void BoxInCorner(uint16_t x, uint16_t y, int16_t dx, int16_t dy);
 void BoardMask(Piece mask);
 
 void InitGame() {
@@ -59,6 +62,12 @@ void StepGame() {
     GameState.running = false;
     Winning();
   }
+
+  if (stuck) {
+    GameOver();
+    stuck = false;
+  }
+
 }
 
 void LoadGame() {
@@ -112,13 +121,15 @@ void LoadLevel() {
     column %= 0x10;
   }
   GameState.modified = true;
+  stuck = false;
 }
 
 void GameOver() {
   GameState.running = false;
-#ifdef _DEBUG
-  Platform::DebugPrint(U8"Game Over!");
-#endif
+  unsigned long elapsed = Platform::Millis() - GameState.start;
+
+  DrawResult(U8"Vous êtes coincé!", 2, GameState.level, GameState.moves,
+      elapsed);
 }
 
 void Winning () {
@@ -139,7 +150,7 @@ void Winning () {
   }
   Platform::Clear();
   DrawStars(stars);
-  DrawResult(U8"Vous avez réussi!", GameState.level, GameState.moves,
+  DrawResult(U8"Vous avez réussi!", 4, GameState.level, GameState.moves,
       elapsed);
 }
 
@@ -172,9 +183,6 @@ void ExecuteMove(uint8_t button) {
   }
   uint16_t to_x = from_x + delta_x;
   uint16_t to_y = from_y + delta_y;
-
-#ifdef _DEBUG
-#endif
 
   // Check whether the move will proceed
   // We are hitting a wall: No move possible.
@@ -217,12 +225,12 @@ void ExecuteMove(uint8_t button) {
         board[from_x][from_y] = Floor;
     }
     GameState.moves++;
+    GameState.modified = true;
   }
-  GameState.modified = true;
 }
 
 bool MoveBox(uint16_t from_x, uint16_t from_y) {
-  uint16_t delta_x=0, delta_y=0;
+  int16_t delta_x=0, delta_y=0;
   uint16_t to_x, to_y;
 
   switch (worker.direction) {
@@ -250,10 +258,46 @@ bool MoveBox(uint16_t from_x, uint16_t from_y) {
       BoxCount--;
     } else {
       board[to_x][to_y] = Box;
+      BoxInCorner(to_x, to_y, delta_x, delta_y);
+    }
+    if (board[from_x][from_y] == BoxOnTarget) {
+      BoxCount++;
     }
     return true;
   }
   return false;
+}
+
+void BoxInCorner(uint16_t x, uint16_t y, int16_t dx, int16_t dy) {
+  bool neighbour[4];
+
+  neighbour[down] = (dy != -1) && (
+                    (y + 1 == VDIM) || (board[x][y + 1] == Box) ||
+                    (board[x][y + 1] == BoxOnTarget) ||
+                    (board[x][y + 1] == Wall));
+
+  neighbour[left] = (dx != 1) && (
+                    (x == 0) || (board[x - 1][y] == Box) ||
+                    (board[x - 1][y] == BoxOnTarget) ||
+                    (board[x - 1][y] == Wall));
+
+  neighbour[right] = (dx != -1) && (
+                     (x + 1 == HDIM) || (board[x + 1][y] == Box) ||
+                     (board[x + 1][y] == BoxOnTarget) ||
+                     (board[x + 1][y] == Wall));
+
+  neighbour[up] = (dy != 1) && (
+                  (y == 0) || (board[x][y - 1] == Box) ||
+                  (board[x][y - 1] == BoxOnTarget) ||
+                  (board[x][y - 1] == Wall));
+
+
+  if ((neighbour[down] && neighbour[left]) ||
+      (neighbour[down] && neighbour[right]) ||
+      (neighbour[up] && neighbour[left]) ||
+      (neighbour[up] && neighbour[right])) {
+    stuck = true;
+  }
 }
 
 void BoardMask(Piece mask) {

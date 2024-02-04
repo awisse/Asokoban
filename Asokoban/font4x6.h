@@ -19,8 +19,9 @@
 #define FONT_SPACE_INDEX 64
 #define FONT_APOSTROPHE_INDEX 65
 #define FONT_EACUTE_INDEX 66
-#define FONT_COLON_INDEX 67
-#define FONT_BIDON_INDEX 68
+#define FONT_ECIRCONFLEX_INDEX 67
+#define FONT_COLON_INDEX 68
+#define FONT_BIDON_INDEX 69
 
 
 const uint8_t PROGMEM font_images[] = {
@@ -426,6 +427,12 @@ const uint8_t PROGMEM font_images[] = {
   0x2A,  // ░░▓░▓░▓░
   0x2B,  // ░░▓░▓░▓▓
   0x2D,  // ░░▓░▓▓░▓
+
+  // #C3AA Letter 'ê'.
+  0x1C,  // ░░░▓▓▓░░
+  0x2B,  // ░░▓░▓░▓▓
+  0x2B,  // ░░▓░▓░▓▓
+  0x2C,  // ░░▓░▓▓░░
 
   // #3A Symbol ':'.
   0x00,  // ░░░░░░░░
