@@ -2,9 +2,9 @@ TARGET := ardusdl
 VPATH = ../Asokoban
 CPPFLAGS :=  -ggdb -D_REENTRANT -I/usr/include/SDL2
 LDLIBS := -lSDL2
-SOURCES := $(filter-out DrawFont.cpp, $(wildcard $(VPATH)/*.cpp *.cpp))
+SOURCES := $(wildcard $(VPATH)/*.cpp *.cpp)
 OBJECTS := $(SOURCES:%.cpp=%.o)
-INCLUDES := levels.h sprites.h defines.h
+INCLUDES := levels.h sprites.h defines.h font.h font4x6.h
 
 all: $(TARGET)
 

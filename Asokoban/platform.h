@@ -6,10 +6,12 @@
 class Platform
 {
 public:
+  // General
 	static uint8_t ButtonState();
+  static uint8_t GetBuffer();
   // Drawing
+  static void DrawBuffer(); // Do we need this?
   static void PutPixel(uint8_t x, uint8_t y, uint8_t colour);
-  static uint8_t GetPixel(uint8_t x, uint8_t y);
   static void DrawBitmap(const uint8_t* bitmap, int16_t x, int16_t y,
                   uint8_t w, uint8_t h, uint8_t colour);
   static void DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t colour);
@@ -34,7 +36,9 @@ public:
   // Debug
 #ifdef _DEBUG
   static void DebugPrint(uint16_t value);
-  static void DebugPrint(char* text);
+  static void DebugPrint(unsigned long value);
+  static void DebugPrint(float value);
+  static void DebugPrint(const uint8_t* text);
 #endif
 	
 };

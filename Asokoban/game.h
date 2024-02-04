@@ -5,7 +5,7 @@
 #include "defines.h"
 typedef struct {
   bool running;   // True if running, false if not.
-  bool modified;  // True after board is modified. 
+  bool modified;  // True after board is modified.
   bool animating; // True if animation running. No input processed.
   uint16_t level; // Game level
   unsigned long start; // Milliseconds at start

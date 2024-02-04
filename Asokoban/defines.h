@@ -15,7 +15,10 @@
 //#define pgm_read_ptr pgm_read_word
 #endif
 
-/* #define _DEBUG */
+#define _DEBUG
+
+// Conversions
+#define U8 (uint8_t*)
 
 // Board Dimensions
 #define HDIM 16
@@ -38,4 +41,8 @@
 #define INPUT_DOWN 16u
 #define INPUT_A 8u
 #define INPUT_B 4u
+
+// Time
 #define LONG_PRESS 2000
+// To obtain reward stars
+#define STAR_STEP 3000

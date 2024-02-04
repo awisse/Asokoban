@@ -9,7 +9,7 @@ struct CharPosition {
 
 Platform p;
 
-void Font::PrintString(const char* str, uint8_t line, uint8_t x, uint8_t colour)
+void Font::PrintString(const uint8_t* str, uint8_t line, uint8_t x, uint8_t colour)
 {
 	uint8_t xorMask = colour == COLOUR_BLACK ? 0xFF : 0;
   struct CharPosition pos;
@@ -19,9 +19,11 @@ void Font::PrintString(const char* str, uint8_t line, uint8_t x, uint8_t colour)
 
 	for (;;)
 	{
-		char c = *str++;
+		uint8_t c = *str++;
 		if (!c)
 			break;
+    if (c == 0xC3) 
+      c = *str++;
 
     // We are cheating with type conversion here in order
     // to remain compatible with the Arduboy version
@@ -69,7 +71,7 @@ void Font::PrintInt(uint16_t val, uint8_t line, uint8_t x, uint8_t colour)
 
 }
 
-void Font::DrawChar(uint8_t* screenPtr, char c, uint8_t xorMask)
+void Font::DrawChar(uint8_t* screenPtr, uint8_t c, uint8_t xorMask)
 {
   uint16_t idx = CharIdx(c);
 	const uint8_t* fontPtr;

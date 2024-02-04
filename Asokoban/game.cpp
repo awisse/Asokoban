@@ -47,7 +47,7 @@ void StepGame() {
   if (GameState.animating) {
     UpdateAnimation();
   } else {
-    HandleInput();    
+    HandleInput();
   }
 
   if (GameState.modified) {
@@ -55,7 +55,7 @@ void StepGame() {
     GameState.modified = false;
   }
 
-  if (BoxCount == 0) {
+  if ((BoxCount == 0) && (GameState.running)) {
     GameState.running = false;
     Winning();
   }
@@ -71,8 +71,8 @@ uint16_t FindLevel() {
   uint16_t idx = 0, nextIdx;
   uint16_t i = 0; // Level counter
 
-  while ((i < GameState.level) && 
-      ((nextIdx=idx+(uint16_t)pgm_read_byte(&Levels[idx])+1) < 
+  while ((i < GameState.level) &&
+      ((nextIdx=idx+(uint16_t)pgm_read_byte(&Levels[idx])+1) <
        sizeof(Levels))) {
     idx = nextIdx;
     i++;
@@ -92,7 +92,7 @@ void LoadLevel() {
   uint16_t index = FindLevel();
   uint8_t row=0, column=0;
 
-  for (i=index + 1; 
+  for (i=index + 1;
       i <= index + (int16_t)pgm_read_byte(&Levels[index]); i++) {
     c = pgm_read_byte(&Levels[i]);
     rpt = (c >> 4) + 1;
@@ -116,12 +116,31 @@ void LoadLevel() {
 
 void GameOver() {
   GameState.running = false;
+#ifdef _DEBUG
+  Platform::DebugPrint(U8"Game Over!");
+#endif
 }
 
 void Winning () {
   // Show result.
-  //
-  // 
+  uint8_t stars;
+
+  unsigned long elapsed = Platform::Millis() - GameState.start;
+  if (elapsed < STAR_STEP) {
+    stars = 0x0F;
+  } else if (elapsed < 2 * STAR_STEP) {
+    stars = 0x07;
+  } else if (elapsed < 3 * STAR_STEP) {
+    stars = 0x03;
+  } else if (elapsed < 4 * STAR_STEP) {
+    stars = 0x01;
+  } else {
+    stars = 0;
+  }
+  Platform::Clear();
+  DrawStars(stars);
+  DrawResult(U8"Vous avez réussi!", GameState.level, GameState.moves,
+      elapsed);
 }
 
 void UpdateAnimation() {
@@ -129,25 +148,25 @@ void UpdateAnimation() {
 }
 
 void ExecuteMove(uint8_t button) {
-  
-  uint16_t from_x = worker.x; 
+
+  uint16_t from_x = worker.x;
   uint16_t from_y = worker.y;
   uint16_t delta_x = 0, delta_y = 0;
 
   switch (button) {
-    case INPUT_UP: 
+    case INPUT_UP:
       worker.direction=up;
       delta_y = -1;
       break;
-    case INPUT_LEFT: 
+    case INPUT_LEFT:
       worker.direction=left;
       delta_x = -1;
       break;
-    case INPUT_DOWN: 
+    case INPUT_DOWN:
       worker.direction=down;
       delta_y = 1;
       break;
-    case INPUT_RIGHT: 
+    case INPUT_RIGHT:
       worker.direction=right;
       delta_x = 1;
   }
@@ -202,7 +221,7 @@ void ExecuteMove(uint8_t button) {
   GameState.modified = true;
 }
 
-bool MoveBox(uint16_t from_x, uint16_t from_y) { 
+bool MoveBox(uint16_t from_x, uint16_t from_y) {
   uint16_t delta_x=0, delta_y=0;
   uint16_t to_x, to_y;
 

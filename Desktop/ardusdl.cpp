@@ -9,7 +9,7 @@
 #include "../Asokoban/platform.h"
 #include "../Asokoban/controller.h"
 #include "../Asokoban/game.h"
-/* #include "../Asokoban/Font.h" */
+#include "../Asokoban/font.h"
 
 #define ZOOM_SCALE 4
 
@@ -240,7 +240,7 @@ void Platform::DebugPrint(float value) {
   }
 }
 
-void Platform::DebugPrint(const char* text) {
+void Platform::DebugPrint(const uint8_t* text) {
   std::cout << text << "\n";
 }
 #endif
