@@ -15,6 +15,8 @@
 
 SDL_Window* AppWindow;
 SDL_Renderer* AppRenderer;
+SDL_Surface* AppSurface;
+uint8_t sBuffer[DISPLAY_WIDTH * DISPLAY_HEIGHT / 8];
 EEPROM eeprom;
 unsigned long StartTime;
 #ifdef _DEBUG
@@ -40,6 +42,27 @@ void Platform::PutPixel(uint8_t x, uint8_t y, uint8_t colour) {
 
   SetColour(colour);
   SDL_RenderDrawPoint(AppRenderer, x, y);
+}
+
+void Platform::DrawBuffer() {
+  // Transpose sBuffer to screen. Faster than PutPixel one by one
+  int i, bit;
+  SDL_Rect sq;
+
+  sq.w = sq.h = ZOOM_SCALE;
+
+  for (i = 0; i < DISPLAY_WIDTH * DISPLAY_HEIGHT / 8; i++) {
+    // 1 byte = 8 vertical pixels
+    for (bit=0; bit<8; bit++) {
+      if ((sBuffer[i] >> bit) & 0x01) {
+        sq.y = ZOOM_SCALE * (i / DISPLAY_WIDTH * 8 + 7 - bit);
+        sq.x = ZOOM_SCALE * (i % DISPLAY_WIDTH);
+        if (SDL_FillRect(AppSurface, &sq, 0xFFFFFFFF)) {
+          std::cerr << SDL_GetError() << "\n";
+        }
+      }
+    }
+  }
 }
 
 uint8_t Platform::GetPixel(uint8_t x, uint8_t y) {
@@ -76,7 +99,7 @@ void Platform::DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
   SetColour(colour);
 
   if (SDL_RenderDrawLine(AppRenderer, x0, y0, x1, y1)) {
-    std::cout << SDL_GetError() << std::endl;
+    std::cout << SDL_GetError() << "\n";
   }
 }
 
@@ -91,7 +114,7 @@ void Platform::DrawRect(int16_t x, int16_t y, uint8_t w, uint8_t h) {
   SetColour(COLOUR_WHITE);
 
   if (SDL_RenderDrawRect(AppRenderer, &rect) < 0) {
-    std::cout << SDL_GetError() << std::endl;
+    std::cout << SDL_GetError() << "\n";
   }
 }
 
@@ -286,6 +309,7 @@ unsigned long Platform::Millis() {
 //
 void Initialize() {
   struct timespec ts;
+  memset(sBuffer, 0, sizeof(sBuffer));
   // Initialize timer from start of program
   if (clock_gettime(CLOCK_REALTIME, &ts)) {
     std::cerr << "Can't get clock_gettime" << "\n";
@@ -299,11 +323,16 @@ void Initialize() {
 
 int main(int argc, char* argv[])
 {
+#ifdef _DEBUG
+  uint32_t i; // For displaying surface values
+  uint16_t pixel; // Setting a random pixel in sBuffer
+#endif
   SDL_Init(SDL_INIT_VIDEO);
 
   SDL_CreateWindowAndRenderer(DISPLAY_WIDTH * ZOOM_SCALE, DISPLAY_HEIGHT * ZOOM_SCALE,
       SDL_WINDOW_RESIZABLE, &AppWindow, &AppRenderer);
   SDL_RenderSetLogicalSize(AppRenderer, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+  AppSurface = SDL_GetWindowSurface(AppWindow);
 
   Initialize();
 
@@ -351,6 +380,19 @@ int main(int argc, char* argv[])
             case SDLK_ESCAPE:
               running = false;
               break;
+
+#ifdef _DEBUG
+            case SDLK_t:
+              for (i=0; i<64; i++) {
+                pixel = Random(0, sizeof(sBuffer) * 8);
+                sBuffer[pixel >> 3] |= 1 << (pixel & 0x07);
+              }
+              Platform::DrawBuffer();
+              SDL_UpdateWindowSurface(AppWindow);
+              SDL_Delay(4000);
+              break;
+#endif
+
           }
           break;
 
