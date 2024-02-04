@@ -37,7 +37,28 @@ void SetColour(uint8_t colour) {
   }
 }
 
+
 // From Platform.h
+uint8_t Platform::ButtonState()
+{
+  return InputMask;
+}
+
+uint8_t* Platform::GetBuffer() {
+  return sBuffer;
+}
+
+void Platform::FmtTime(unsigned int ms, uint8_t* str) {
+  uint8_t m, h, s, ds;
+
+  h = ms / 3600000;
+  m = (ms % 3600000) / 60000;
+  s = (ms % 60000) / 1000;
+  ds = (ms % 1000) / 100;
+
+  sprintf((char*)str, "%hhu:%02hhu:%02hhu.%hhu", h, m, s, ds);
+}
+
 void Platform::PutPixel(uint8_t x, uint8_t y, uint8_t colour) {
 
   SetColour(colour);
@@ -63,13 +84,6 @@ void Platform::DrawBuffer() {
       }
     }
   }
-}
-
-uint8_t Platform::GetPixel(uint8_t x, uint8_t y) {
-
-  // Not Yet Implemented
-  std::cout << "Not yet implemented !!" << "\n";
-  return 0;
 }
 
 void Platform::DrawBitmap(const uint8_t* data, int16_t x, int16_t y,
@@ -275,12 +289,6 @@ uint8_t Platform::FromEEPROM(uint8_t *bytes, int offset, int sz) {
 
   eeprom.read(bytes, getFrom, sz);
   return Saved;
-}
-
-// From Controller.h
-uint8_t Platform::ButtonState()
-{
-  return InputMask;
 }
 
 // From Game.h

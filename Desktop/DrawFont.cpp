@@ -86,7 +86,7 @@ void Font::DrawChar(uint8_t* screenPtr, uint8_t c, uint8_t xorMask)
 	glyphPtr[2] = xorMask ^ fontPtr[2];
 	glyphPtr[3] = xorMask ^ fontPtr[3];
 
-  p.DrawBitmap(glyphPtr, pos->x, 8 * (pos->line), FONT_WIDTH, FONT_HEIGHT, COLOUR_WHITE);
+  p.DrawBitmap(glyphPtr, pos->x, 8 * (pos->line), FONT_WIDTH, 8, COLOUR_WHITE);
 
 
 }

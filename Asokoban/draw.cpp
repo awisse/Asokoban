@@ -72,6 +72,8 @@ void DrawResult(const uint8_t* text, const uint16_t level,
      Pas: xxx   Temps: xxx
   */
   uint8_t x, w;
+  uint8_t time[12];
+  Platform::FmtTime(elapsed, time);
 
   w = 5 * len(text);
 
@@ -82,19 +84,13 @@ void DrawResult(const uint8_t* text, const uint16_t level,
   font.PrintString(text, 4, x);
 
   // Draw Result
-  font.PrintString(U8"Pas: ", 5, x);
-  font.PrintInt(moves, 5, x + 25);
+  font.PrintString(U8"Niveau:", 5, x);
+  font.PrintInt(level, 5, x + 8 * font.glyphWidth);
+  font.PrintString(U8"Pas:", 6, x);
+  font.PrintInt(moves, 6, x + 8 * font.glyphWidth);
+  font.PrintString(U8"Temps:", 7, x);
+  font.PrintString(time, 7, x + 8 * font.glyphWidth);
 
-#ifdef _DEBUG
-  Platform::DebugPrint(level);
-  Platform::DebugPrint(U8" Level");
-  Platform::DebugPrint((float)(elapsed/1000.0));
-  Platform::DebugPrint(U8" Seconds");
-  Platform::DebugPrint(moves);
-  Platform::DebugPrint(U8" Moves");
-  Platform::DebugPrint((uint16_t)w);
-  Platform::DebugPrint(U8" Text Width");
-#endif
 }
 
 // vim:fdm=syntax

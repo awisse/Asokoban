@@ -8,7 +8,8 @@ class Platform
 public:
   // General
 	static uint8_t ButtonState();
-  static uint8_t GetBuffer();
+  static uint8_t* GetBuffer();
+  static void FmtTime(unsigned int ms, uint8_t* str);
   // Drawing
   static void DrawBuffer(); // Do we need this?
   static void PutPixel(uint8_t x, uint8_t y, uint8_t colour);
