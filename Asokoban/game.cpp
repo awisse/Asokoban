@@ -29,20 +29,22 @@ void BoardMask(Piece mask);
 void InitGame() {
 
   BoardMask(Empty);
-  GameState.running = true;
-  GameState.animating = false;
   GameState.level = 0;
-  GameState.modified = true;
-  GameState.start = Platform::Millis();
-  GameState.moves = 0;
   AnimationStep = 0;
 
   Platform::Clear();
   LoadLevel();
 }
 
-void NewGame() {
+void RestartLevel() {
   LoadLevel();
+}
+
+void NextLevel() {
+  if (!(GameState.running)) {
+    GameState.level++;
+    LoadLevel();
+  }
 }
 
 void StepGame() {
@@ -120,7 +122,12 @@ void LoadLevel() {
     row += column >= 0x10 ? 1 : 0;
     column %= 0x10;
   }
+  GameState.running = true;
   GameState.modified = true;
+  GameState.animating = false;
+  GameState.start = Platform::Millis();
+  GameState.moves = 0;
+  GameState.saved = true;
   stuck = false;
 }
 
@@ -272,24 +279,16 @@ void BoxInCorner(uint16_t x, uint16_t y, int16_t dx, int16_t dy) {
   bool neighbour[4];
 
   neighbour[down] = (dy != -1) && (
-                    (y + 1 == VDIM) || (board[x][y + 1] == Box) ||
-                    (board[x][y + 1] == BoxOnTarget) ||
-                    (board[x][y + 1] == Wall));
+                    (y + 1 == VDIM) || (board[x][y + 1] == Wall));
 
   neighbour[left] = (dx != 1) && (
-                    (x == 0) || (board[x - 1][y] == Box) ||
-                    (board[x - 1][y] == BoxOnTarget) ||
-                    (board[x - 1][y] == Wall));
+                    (x == 0) || (board[x - 1][y] == Wall));
 
   neighbour[right] = (dx != -1) && (
-                     (x + 1 == HDIM) || (board[x + 1][y] == Box) ||
-                     (board[x + 1][y] == BoxOnTarget) ||
-                     (board[x + 1][y] == Wall));
+                     (x + 1 == HDIM) || (board[x + 1][y] == Wall));
 
   neighbour[up] = (dy != 1) && (
-                  (y == 0) || (board[x][y - 1] == Box) ||
-                  (board[x][y - 1] == BoxOnTarget) ||
-                  (board[x][y - 1] == Wall));
+                  (y == 0) || (board[x][y - 1] == Wall));
 
 
   if ((neighbour[down] && neighbour[left]) ||

@@ -14,7 +14,8 @@ typedef struct {
 } GameStateStruct;
 
 void InitGame();
-void NewGame();
+void RestartLevel();
+void NextLevel();
 void StepGame();
 void LoadGame();
 void SaveGame();

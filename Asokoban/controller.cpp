@@ -26,6 +26,7 @@ void HandleInput() {
   if (JustPressed(INPUT_A)) {
     AButtonDown = true;
     startAPress = Platform::Millis();
+    NextLevel();
   }
 
   if (JustReleased(INPUT_A)) {
@@ -57,7 +58,7 @@ void HandleInput() {
     startBPress = Platform::Millis();
     BButtonLongPressCycles++;
     // Handle Long Press Event
-    NewGame();
+    RestartLevel();
   }
 
   uint8_t buttons = DebouncedButtons();

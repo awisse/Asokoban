@@ -72,8 +72,13 @@ void DrawResult(const uint8_t* text, const uint8_t row,
      Text on top
      Pas: xxx   Temps: xxx
   */
-  uint8_t x, w;
+  uint8_t x, y, w, h;
   uint8_t time[12];
+
+  if (row > 7) {
+    return; // Nothing to draw. Off screen.
+  }
+
   Platform::FmtTime(elapsed, time);
 
   w = 5 * len(text);
@@ -81,8 +86,11 @@ void DrawResult(const uint8_t* text, const uint8_t row,
   // Text x-position
   x = (DISPLAY_WIDTH - w) / 2;
 
+
   // Make room on screen
-  Platform::DrawFilledRect(x - 1, row * 8, w + 2, 31, COLOUR_BLACK);
+  y = row ? row * 8 - 1 : 0;
+  h = row > 3 ? DISPLAY_HEIGHT - row * 8 : 32;
+  Platform::DrawFilledRect(x - 1, y, w + 2, h, COLOUR_BLACK);
 
   // Draw Text
   font.PrintString(text, row, x);
