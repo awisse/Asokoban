@@ -24,6 +24,8 @@
 #define HDIM 16
 #define VDIM 8
 #define PLACES HDIM * VDIM
+#define EEPROM_SZ 0x0
+#define MAX_LEVELS 0x180
 
 // Screen Dimensions
 #define DISPLAY_WIDTH 128

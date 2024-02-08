@@ -9,7 +9,6 @@ public:
   // General
 	static uint8_t ButtonState();
   static uint8_t* GetBuffer();
-  static void FmtTime(unsigned int ms, uint8_t* str);
   // Drawing
   static void DrawBuffer(); // Do we need this?
   static void PutPixel(uint8_t x, uint8_t y, uint8_t colour);
@@ -19,7 +18,7 @@ public:
   static void DrawRect(int16_t x, int16_t y, uint8_t w, uint8_t h);
   static void DrawFilledRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t colour);
   static void DrawCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour);
-  static void FillCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour);
+  static void DrawFilledCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour);
   static void FillScreen(uint8_t colour);
   static void Clear();
   // Timer

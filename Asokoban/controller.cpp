@@ -1,10 +1,46 @@
+// Dispatching user events to the appropriate functions,
+// depending on the global State type variable state.
+// Emulates "registring listeners"
 #include "controller.h"
 #include "game.h"
+#include "worker.h"
 #include "defines.h"
 #include "platform.h"
 
 uint8_t previousButtons, currentButtons;
 uint8_t DebouncedButtons();
+
+
+void Dispatch(Event e) {
+/* For each event, call all "listeners" that subscribe to that event.
+ * The listeners decide whether to act on the event. */
+  switch (e) {
+    case Short_A:
+      NextLevel();
+      SelectLevel();
+      break;
+
+    case Long_A:
+      RestartLevel();
+      break;
+
+    case Short_B:
+      Menu();
+      break;
+
+    case Long_B:
+      Terminate();
+      break;
+
+    case Left:
+    case Right:
+    case Up:
+    case Down:
+      MoveWorker(e);
+      MoveMenu(e);
+      break;
+  }
+}
 
 bool JustPressed(uint8_t buttons) {
   return ((buttons & currentButtons) && !(buttons & previousButtons));
@@ -16,8 +52,10 @@ bool JustReleased(uint8_t buttons) {
 
 void HandleInput() {
 
-  static unsigned long startAPress, startBPress;
-  static bool AButtonDown, BButtonDown;
+  static uint32_t startAPress;
+  static bool AButtonDown;
+  static uint32_t startBPress;
+  static bool BButtonDown;
   static int BButtonLongPressCycles;
 
   previousButtons = currentButtons;
@@ -26,7 +64,7 @@ void HandleInput() {
   if (JustPressed(INPUT_A)) {
     AButtonDown = true;
     startAPress = Platform::Millis();
-    NextLevel();
+    Dispatch(Short_A);
   }
 
   if (JustReleased(INPUT_A)) {
@@ -36,35 +74,32 @@ void HandleInput() {
 
   if (AButtonDown && (Platform::Millis() - startAPress) > LONG_PRESS) {
     startAPress = Platform::Millis();
-    // Handle Long Press Event
-    LoadGame();
+    Dispatch(Long_A);
   }
 
+  // These events available for now:
   if (JustPressed(INPUT_B)) {
     BButtonDown = true;
     startBPress = Platform::Millis();
-    // Handle Button Down Event
-    SaveGame();
   }
 
   if (JustReleased(INPUT_B)) {
     BButtonDown = false;
     startBPress = Platform::Millis();
     BButtonLongPressCycles = 0;
-    // Handle Button Up Event
   }
 
   if (BButtonDown && (Platform::Millis() - startBPress) > LONG_PRESS) {
     startBPress = Platform::Millis();
     BButtonLongPressCycles++;
-    // Handle Long Press Event
-    RestartLevel();
   }
 
   uint8_t buttons = DebouncedButtons();
-  if (buttons & (INPUT_UP | INPUT_DOWN | INPUT_LEFT | INPUT_RIGHT)) {
-    ExecuteMove(buttons);
-  }
+  if (buttons & INPUT_UP) Dispatch(Up);
+  else if (buttons & INPUT_DOWN) Dispatch(Down);
+  else if (buttons & INPUT_LEFT) Dispatch(Left);
+  else if (buttons & INPUT_RIGHT) Dispatch(Right);
+
 }
 
 uint8_t DebouncedButtons() {

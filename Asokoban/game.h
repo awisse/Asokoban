@@ -3,23 +3,21 @@
 #include <stdint.h>
 #include "globals.h"
 #include "defines.h"
+// This structure is to be saved to EEPROM
 typedef struct {
-  bool running;   // True if running, false if not.
-  bool modified;  // True after board is modified.
-  bool animating; // True if animation running. No input processed.
   uint16_t level; // Game level
-  unsigned long start; // Milliseconds at start
-  uint16_t moves; // Number of moves since level started
-  bool saved;
+  uint16_t max_level; // Highest level reached
+  uint16_t level_ix;  // Index of level in Levels
 } GameStateStruct;
 
 void InitGame();
-void RestartLevel();
-void NextLevel();
 void StepGame();
+void RestartLevel();
+void Terminate();
+void NextLevel();
+void SelectLevel();
 void LoadGame();
 void SaveGame();
-
-void ExecuteMove(uint8_t button);
-
+void Menu();
+void MoveMenu(Event e);
 // vim: tabstop=2:softtabstop=2:shiftwidth=2:expandtab:filetype=cpp

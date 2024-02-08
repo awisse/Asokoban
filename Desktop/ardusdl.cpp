@@ -48,17 +48,6 @@ uint8_t* Platform::GetBuffer() {
   return sBuffer;
 }
 
-void Platform::FmtTime(unsigned int ms, uint8_t* str) {
-  uint8_t m, h, s, ds;
-
-  h = ms / 3600000;
-  m = (ms % 3600000) / 60000;
-  s = (ms % 60000) / 1000;
-  ds = (ms % 1000) / 100;
-
-  sprintf((char*)str, "%hhu:%02hhu:%02hhu.%hhu", h, m, s, ds);
-}
-
 void Platform::PutPixel(uint8_t x, uint8_t y, uint8_t colour) {
 
   SetColour(colour);
@@ -183,7 +172,7 @@ void Platform::DrawCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour) {
   }
 }
 
-void Platform::FillCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour) {
+void Platform::DrawFilledCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour) {
 
   SetColour(colour);
 

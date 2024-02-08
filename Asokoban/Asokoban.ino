@@ -53,8 +53,24 @@ void Platform::DrawBitmap(const uint8_t* bmp, int16_t x, int16_t y, uint8_t w, u
   arduboy.drawBitmap(x, y, bmp, w, h, colour);
 }
 
+void Platform::DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t colour) {
+  arduboy.drawLine(x0, y0, x1, y1, colour);
+}
+
+void Platform::DrawRect(int16_t x, int16_t y, uint8_t w, uint8_t h) { 
+  arduboy.drawRect(x, y, w, h);
+}
+
 void Platform::DrawFilledRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t colour) {
   arduboy.fillRect(x, y, w, h, colour);
+}
+
+void Platform::DrawCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour) {
+  arduboy.drawCircle(x0, y0, r, colour);
+}
+
+void Platform::DrawFilledCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour) {
+  arduboy.fillCircle(x0, y0, r, colour);
 }
 
 void Platform::Clear() {
@@ -114,60 +130,6 @@ void Font::PrintInt(uint16_t val, uint8_t line, uint8_t x, uint8_t colour)
     screenPtr += glyphWidth;
 	}
 
-}
-
-void uint_to_str(uint8_t* str, uint8_t *len, uint8_t n) {
-  /* Transform integer to string. str must have at least 6 places */
-  uint8_t buffer[5];
-  int i;
-
-  if (n == 0) {
-    str[0] = '0';
-    *len = 1;
-    return;
-  }
-  for (*len=0; (*len<5) && (n!=0); (*len)++) {
-    buffer[*len] = '0' + (n % 10);
-    n /= 10;
-  }
-  for (i = *len - 1; i >=0; i--) {
-    str[i] = buffer[*len - 1 - i];
-  }
-}
-
-void Platform::FmtTime(unsigned int ms, uint8_t* str) {
-  /* Format milliseconds (ms) into minutes:seconds.decisecond
-     Max length of str: 1:2:2.1 = 10 characters. */
-  constexpr uint8_t maxChars = 8;
-  uint8_t n, i, t, l=0;
-
-  // Hours
-  t = ms / 3600000;
-  uint_to_str(str, &l, t);
-  str[l] = ':';
-
-  n = l + 1;
-  t = (ms % 3600000) / 60000;
-  uint_to_str(str + n, &l, t);
-
-  if (l == 1) {
-    str[n + 1] = str[n];
-    str[n] = '0';
-  }
-  str[n + 2] = ':';
-
-  n = n + 3;
-  t = (ms % 60000) / 1000;
-  uint_to_str(str + n, &l, t);
-
-  if (l == 1) {
-    str[n + 1] = str[n];
-    str[n] = '0';
-  }
-  str[n + 2] = '.';
-
-  str[n + 3] = '0' + ((ms % 1000) / 100);
-  str[n + 4] = 0;
 }
 
 void Font::DrawChar(uint8_t* screenPtr, uint8_t c, uint8_t xorMask)
