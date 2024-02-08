@@ -71,7 +71,7 @@ void DrawMenu(uint16_t level, uint16_t* results) {
   for (i = 0; i < 8; i++) {
     draw_lvl = displayed_lvl + i;
     result = results[draw_lvl - 1];
-    Draw1MenuItem((i & 3) * 32, (i >> 2) * 32, level, result, draw_lvl==level);
+    Draw1MenuItem((i & 3) * 32, (i >> 2) * 32, draw_lvl, result, draw_lvl==level);
   }
 }
 

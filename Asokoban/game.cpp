@@ -91,14 +91,15 @@ void SelectLevel() {
   }
 }
 
+#include "results.h"
 void LoadGame() {
   // TODO: Load data for display of results.
   // For now: Delete result array
   for (uint16_t i=0; i<MAX_LEVELS; i++) {
-    results[i] = 0;
+    results[i] = Results[i];
   }
   GameState.level = 1;
-  GameState.max_level = 1;
+  GameState.max_level = MAX_LEVELS;
   GameState.level_ix = 0;
   best_time = 0; // This is what we are loading
 
@@ -122,7 +123,7 @@ void MoveMenu(Event e) {
   if (state != menu) return;
   switch (e) {
     case Up:
-      if (GameState.level > 5)
+      if (GameState.level > 4)
         GameState.level -= 4;
       break;
     case Left:
@@ -136,6 +137,7 @@ void MoveMenu(Event e) {
     case Right:
       if (GameState.level < GameState.max_level)
         GameState.level++;
+      break;
     default:
       return;
   }
