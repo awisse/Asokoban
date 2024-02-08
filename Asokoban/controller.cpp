@@ -81,6 +81,7 @@ void HandleInput() {
   if (JustPressed(INPUT_B)) {
     BButtonDown = true;
     startBPress = Platform::Millis();
+    Dispatch(Short_B);
   }
 
   if (JustReleased(INPUT_B)) {

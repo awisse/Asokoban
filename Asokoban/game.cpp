@@ -10,7 +10,7 @@ Helper functions to unclutter main .ino file
 
 GameStateStruct GameState;
 Player worker;
-Piece board[HDIM][VDIM]; 
+Piece board[HDIM][VDIM];
 uint16_t results[MAX_LEVELS]; // Holds results for each level
 // Game State variables
 // Global variable
@@ -67,7 +67,7 @@ void StepGame() {
 }
 
 void RestartLevel() {
-  if ((state == running) || (state == over)) {
+  if ((state == success) || (state == running) || (state == over)) {
     LoadLevel();
   }
 }
@@ -77,7 +77,7 @@ void Terminate() {
     LoadLevel();
   }
 }
-  
+
 void NextLevel() {
   if (state == success) {
     GameState.level++;
@@ -97,8 +97,8 @@ void LoadGame() {
   for (uint16_t i=0; i<MAX_LEVELS; i++) {
     results[i] = 0;
   }
-  GameState.level = 0;
-  GameState.max_level = 0;
+  GameState.level = 1;
+  GameState.max_level = 1;
   GameState.level_ix = 0;
   best_time = 0; // This is what we are loading
 
@@ -114,6 +114,7 @@ void Menu() {
   // Display the menu at GameState.level
   if ((state == success) || (state == over)) {
     DrawMenu(GameState.level, results);
+    state = menu;
   }
 }
 
@@ -121,7 +122,7 @@ void MoveMenu(Event e) {
   if (state != menu) return;
   switch (e) {
     case Up:
-      if (GameState.level > 5) 
+      if (GameState.level > 5)
         GameState.level -= 4;
       break;
     case Left:
@@ -143,7 +144,7 @@ void MoveMenu(Event e) {
 
 void FindLevel() {
   uint16_t idx = 0, nextIdx;
-  uint16_t i = 0; // Level counter
+  uint16_t i = 1; // Level counter
 
   while ((i < GameState.level) &&
       ((nextIdx=idx+(uint16_t)pgm_read_byte(&Levels[idx])+1) <
@@ -165,7 +166,8 @@ void LoadLevel() {
   FindLevel();
   uint8_t row=0, column=0;
 
-  for (i=GameState.level_ix + 1; i <= GameState.level_ix + 
+  BoxCount = 0;
+  for (i=GameState.level_ix + 1; i <= GameState.level_ix +
         (int16_t)pgm_read_byte(&Levels[GameState.level_ix]); i++) {
     c = pgm_read_byte(&Levels[i]);
     rpt = (c >> 4) + 1;

@@ -9,9 +9,9 @@
 Font font;
 uint16_t displayed_lvl = 1; // Level displayed in upper left corner
 
-void Draw1MenuItem(uint8_t x, uint8_t y, uint16_t level, uint16_t result, 
+void Draw1MenuItem(uint8_t x, uint8_t y, uint16_t level, uint16_t result,
     bool selected);
-void DrawDashedRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
+void DrawDashedRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
     uint8_t dashlen);
 void DrawMenuStars(uint8_t x, uint8_t y, uint16_t seconds);
 
@@ -69,7 +69,7 @@ void DrawMenu(uint16_t level, uint16_t* results) {
 
   // Display the 8 squares
   for (i = 0; i < 8; i++) {
-    draw_lvl = displayed_lvl + i; 
+    draw_lvl = displayed_lvl + i;
     result = results[draw_lvl - 1];
     Draw1MenuItem((i & 3) * 32, (i >> 2) * 32, level, result, draw_lvl==level);
   }
@@ -87,13 +87,13 @@ void Draw1MenuItem(uint8_t x, uint8_t y, uint16_t level, uint16_t result, bool s
   DrawMenuStars(x + 3, y + 5, result);
   if (level > 9) {
     level_digits++;
-  } 
+  }
   if (level > 99) {
     level_digits++;
   }
 
   font.PrintInt(level, x + (32 - level_digits * FONT_WIDTH) / 2, y + 13);
-  FmtMMSS(result, tm_str);
+  FmtMMSS(result, tm_str, false);
   uint8_t tm_offset = result < 600 ? 9 : 4;
   font.PrintString(tm_str, x + tm_offset, y + 22);
 
@@ -115,7 +115,8 @@ void DrawStars(uint8_t set) {
 void DrawResult(const uint8_t* text, const uint8_t row, const uint16_t level, const uint16_t moves, const uint32_t elapsed) {
   /* Draw a box in the middle of the screen with :
      Text on top
-     Pas: xxx   Temps: xxx
+     Pas: xxx
+     Temps: xxx
   */
   uint8_t x, y, w, h;
   uint8_t time[12];
@@ -132,20 +133,23 @@ void DrawResult(const uint8_t* text, const uint8_t row, const uint16_t level, co
   x = (DISPLAY_WIDTH - w) / 2;
 
   // Make room on screen
-  y = row ? row * 8 - 1 : 0;
-  h = row > 3 ? DISPLAY_HEIGHT - row * 8 : 32;
-  Platform::DrawFilledRect(x - 1, y, w + 2, h, COLOUR_BLACK);
+  y = row ? row * FONT_HEIGHT : 0;
+  h = row > 3 ? DISPLAY_HEIGHT - row * FONT_HEIGHT : 4 * FONT_HEIGHT;
+  Platform::DrawFilledRect(x, y - 1, w, h, COLOUR_BLACK);
 
   // Draw Text
-  font.PrintString(text, row, x);
+  font.PrintString(text, x, y);
 
   // Draw Result
-  font.PrintString(U8"Niveau:", row + 1, x);
-  font.PrintInt(level, row + 1, x + 8 * font.glyphWidth);
-  font.PrintString(U8"Pas:", row + 2, x);
-  font.PrintInt(moves, row + 2, x + 8 * font.glyphWidth);
-  font.PrintString(U8"Temps:", row + 3, x);
-  font.PrintString(time, row + 3, x + 8 * font.glyphWidth);
+  y += FONT_HEIGHT;
+  font.PrintString(U8"Niveau:", x, y);
+  font.PrintInt(level, x + 8 * FONT_WIDTH, y);
+  y += 8;
+  font.PrintString(U8"Pas:", x, y);
+  font.PrintInt(moves, x + 8 * FONT_WIDTH, y);
+  y += 8;
+  font.PrintString(U8"Temps:", x, y);
+  font.PrintString(time, x + 8 * FONT_WIDTH, y);
 }
 
 void DrawDashedHLine(uint8_t x, uint8_t y, uint8_t w, uint8_t dashlen) {
@@ -187,7 +191,7 @@ void DrawDashedRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t dashlen)
 }
 
 void DrawMenuStars(uint8_t x, uint8_t y, uint16_t seconds) {
-  
+
   uint8_t i;
 
   for (i=0; i < 4; i++) {

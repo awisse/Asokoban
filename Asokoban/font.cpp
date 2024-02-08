@@ -56,7 +56,77 @@ uint16_t Font::CharIdx(const uint8_t c) {
       idx = FONT_BIDON_INDEX;
   }
 
-  return idx * FONT_WIDTH;
+  return idx * glyphWidth;
 }
 
+void Font::PrintString(const uint8_t* str, uint8_t x, uint8_t y,
+    uint8_t colour) {
+  Coord pos;
+
+  pos.x = x;
+  pos.y = y;
+
+	for (;;)
+	{
+		uint8_t c = *str++;
+		if (!c)
+			break;
+    if (c == 0xC3)
+      c = *str++;
+
+    // We are cheating with type conversion here in order
+    // to remain compatible with the Arduboy version
+		DrawChar(&pos, c, colour);
+    if (pos.x > DISPLAY_WIDTH - glyphWidth - 1) {
+      pos.y += FONT_HEIGHT;
+    }
+    pos.x += FONT_WIDTH; // uint8_t. Wraps around automatically.
+	}
+}
+
+void Font::PrintInt(uint16_t val, uint8_t x, uint8_t y, uint8_t colour)
+{
+  Coord pos;
+
+  pos.x = x;
+  pos.y = y;
+
+	if (val == 0)
+	{
+		DrawChar(&pos, '0', colour);
+		return;
+	}
+
+	constexpr int maxDigits = 5;
+	char buffer[maxDigits];
+	int bufCount = 0;
+
+	for (int n = 0; n < maxDigits && val != 0; n++)
+	{
+		unsigned char c = val % 10;
+		buffer[bufCount++] = '0' + c;
+		val = val / 10;
+	}
+
+	for (int n = bufCount - 1; n >= 0; n--)
+	{
+		DrawChar(&pos, buffer[n], colour);
+    if (pos.x > DISPLAY_WIDTH - glyphWidth - 1) {
+      pos.y += FONT_HEIGHT;
+    }
+    pos.x += FONT_WIDTH;
+	}
+}
+
+// From font.cpp
+void Font::DrawChar(Coord* pos, uint8_t c, uint8_t colour) {
+
+  uint16_t idx = CharIdx(c);
+  const uint8_t* fontPtr = font_images + idx;
+
+  Platform::DrawBitmap(fontPtr, pos->x, pos->y, glyphWidth, glyphHeight,
+      COLOUR_WHITE);
+}
+
+// vim: tabstop=2:softtabstop=2:shiftwidth=2:expandtab
 

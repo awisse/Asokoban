@@ -4,7 +4,7 @@
 #define MAX_SECONDS 5999
 void uint_to_str(uint8_t* str, uint8_t *len, uint8_t n);
 
-void FmtMMSS(uint16_t seconds, uint8_t* str) {
+void FmtMMSS(uint16_t seconds, uint8_t* str, bool leading_zero) {
   // Return seconds in format mm:ss (minutes:seconds).
   // Maximum: 99:59
   uint8_t mm, ss;
@@ -18,6 +18,10 @@ void FmtMMSS(uint16_t seconds, uint8_t* str) {
   ss = seconds % 60;
 
   uint_to_str(str, &position, mm);
+  if (leading_zero && (position == 1)) {
+    str[position + 1] = str[position];
+    str[position++] = '0';
+  }
   str[position++] = ':';
 
   uint_to_str(str + position, &length, ss);
@@ -36,15 +40,15 @@ void FmtTime(uint32_t ms, uint8_t* str) {
   uint8_t hours, l=0;
 
   // More than 99 hours?? Come on ...
-  if (ms > 359999999) ms = 359999999; 
-  
+  if (ms > 359999999) ms = 359999999;
+
   hours = ms / 3600000;
   uint_to_str(str, &l, hours);
   str[l] = ':';
 
   seconds = (ms % 3600000) / 1000;
 
-  FmtMMSS(seconds, str + l + 1);
+  FmtMMSS(seconds, str + l + 1, true);
 }
 
 void uint_to_str(uint8_t* str, uint8_t *len, uint8_t n) {

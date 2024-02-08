@@ -65,7 +65,7 @@ typedef struct {
 
 extern State state;
 extern Player worker;
-extern Piece board[HDIM][VDIM]; 
+extern Piece board[HDIM][VDIM];
 extern uint8_t BoxCount; // How many boxes not on target
 extern uint16_t moves; // Number of moves since the beginning of the game
 extern bool modified; // True if screen needs to be redrawn

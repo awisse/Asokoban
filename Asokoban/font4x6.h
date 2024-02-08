@@ -1,8 +1,10 @@
 #pragma once
 #include <stdint.h>
 #include "defines.h"
-#define FONT4x6_WIDTH 4
-#define FONT4x6_HEIGHT 7
+#define GLYPH4x6_WIDTH 4
+#define GLYPH4x6_HEIGHT 8
+#define FONT4x6_WIDTH 5
+#define FONT4x6_HEIGHT 8
 
 #define CHAR_EXCLAMATION 33
 #define CHAR_PERIOD 46
@@ -436,7 +438,7 @@ const uint8_t PROGMEM font_images[] = {
 
   // #3A Symbol ':'.
   0x00,  // ░░░░░░░░
-  0x24,  // ░░▓░░▓░░
+  0x12,  // ░░░▓░░▓░
   0x00,  // ░░░░░░░░
   0x00,  // ░░░░░░░░
 
