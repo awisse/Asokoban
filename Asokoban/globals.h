@@ -42,13 +42,13 @@ typedef enum {
 } State;
 
 // Result codes for (To|From)EEPROM
-enum {
+typedef enum {
   Saved,
   NotSaved, // Never been saved.
   WrongOffset,
   TooBig,
   WrongSignature
-};
+} SavedState;
 
 typedef struct {
   uint8_t x;
@@ -62,6 +62,13 @@ typedef struct {
   uint8_t mdigits; // How many digits in minutes
   uint8_t sdigits; // How many digits in seconds
 } Duration;
+
+// This structure is to be saved to EEPROM
+typedef struct {
+  uint16_t level; // Game level
+  uint16_t max_level; // Highest level reached
+  uint16_t level_ix;  // Index of level in Levels
+} GameStateStruct;
 
 extern State state;
 extern Player worker;

@@ -47,4 +47,4 @@
 // Time
 #define LONG_PRESS 2000
 // To obtain reward stars
-#define STAR_STEP 30000
+#define STAR_STEP 30

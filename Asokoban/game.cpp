@@ -6,24 +6,24 @@ Helper functions to unclutter main .ino file
 #include "draw.h"
 #include "controller.h"
 #include "globals.h"
+#include "loadsave.h"
 #include "platform.h"
 
-GameStateStruct GameState;
+// Global variables
 Player worker;
 Piece board[HDIM][VDIM];
 uint16_t results[MAX_LEVELS]; // Holds results for each level
 // Game State variables
 // Global variable
+GameStateStruct GameState;
 State state;   // startup, running, menu, success, over
 // Local to game.cpp
 bool stuck; // True if box stuck in corner
 bool modified; // True if screen needs to be redrawn
 bool saved; // True if Game saved to EEPROM
 uint32_t start; // Milliseconds at start of game
-uint32_t best_time; // Shortest time for this level
 uint16_t moves; // Number of moves since the beginning of the game
 uint8_t BoxCount; // How many boxes not on target
-
 
 // Functions
 void FindLevel();
@@ -40,7 +40,7 @@ void InitGame() {
   }
 
   Platform::Clear();
-  LoadGame();
+  LoadState(&GameState, results);
   LoadLevel();
 }
 
@@ -91,26 +91,6 @@ void SelectLevel() {
   if (state == menu) {
     LoadLevel();
   }
-}
-
-void LoadGame() {
-  uint16_t i;
-  // TODO: Load data for display of results.
-  // For now: Delete result array
-  for (i = 0; i<MAX_LEVELS; i++) {
-    results[i] = 0;
-  }
-  GameState.level = 1;
-  GameState.max_level = 1;
-  GameState.level_ix = 0;
-  best_time = 0xFFFFFFFF; // This is what we are loading
-
-}
-
-void SaveGame() {
-  // TODO: Save after each level.
-  // Save level with time and moves.
-  Platform::DebugPrint((uint8_t*)"Saving game ... TODO!!");
 }
 
 void DoMenu() {
@@ -197,14 +177,13 @@ void LoadLevel() {
   modified = true;
   start = Platform::Millis();
   moves = 0;
-  saved = false;
   stuck = false;
   state = running;
 }
 
 void GameOver() {
 
-  uint32_t elapsed = Platform::Millis() - start;
+  uint16_t elapsed = (Platform::Millis() - start) / 1000;
 
   DrawResult(U8"Vous êtes coincé!", 2, GameState.level, moves, elapsed);
   state = over;
@@ -213,7 +192,7 @@ void GameOver() {
 void Success () {
   // Show result.
   uint8_t stars;
-  uint32_t elapsed = Platform::Millis() - start;
+  uint16_t elapsed = (Platform::Millis() - start) / 1000;
 
   state = success;
   if (elapsed < STAR_STEP) {
@@ -232,12 +211,9 @@ void Success () {
   DrawResult(U8"Vous avez réussi!", 4, GameState.level, moves, elapsed);
 
   // Update time
-  if (elapsed < best_time) {
-    if (elapsed > 0xFFFF * 1000) {
-      elapsed = 0xFFFF * 1000;
-    }
-    best_time = elapsed;
-    results[GameState.level - 1] = elapsed / 1000;
+  uint16_t* result = &results[GameState.level - 1];
+  if ((*result == 0) || (elapsed < *result)) {
+    results[GameState.level - 1]= elapsed;
   }
 
   // Update highest succeeded level
@@ -248,7 +224,7 @@ void Success () {
     // Game is finished !!!
     // TODO: Big party !!!
   }
-  saved = false;
+  SaveState(&GameState, results);
 }
 
 // vim:fdm=syntax:tabstop=2:softtabstop=2:shiftwidth=2:expandtab

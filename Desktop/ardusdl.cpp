@@ -19,6 +19,7 @@ SDL_Surface* AppSurface;
 uint8_t sBuffer[DISPLAY_WIDTH * DISPLAY_HEIGHT / 8];
 EEPROM eeprom;
 unsigned long StartTime;
+int zoom_scale;
 #ifdef _DEBUG
 int counter;
 #endif
@@ -59,14 +60,14 @@ void Platform::DrawBuffer() {
   int i, bit;
   SDL_Rect sq;
 
-  sq.w = sq.h = ZOOM_SCALE;
+  sq.w = sq.h = zoom_scale;
 
   for (i = 0; i < DISPLAY_WIDTH * DISPLAY_HEIGHT / 8; i++) {
     // 1 byte = 8 vertical pixels
     for (bit=0; bit<8; bit++) {
       if ((sBuffer[i] >> bit) & 0x01) {
-        sq.y = ZOOM_SCALE * (i / DISPLAY_WIDTH * 8 + 7 - bit);
-        sq.x = ZOOM_SCALE * (i % DISPLAY_WIDTH);
+        sq.y = zoom_scale * (i / DISPLAY_WIDTH * 8 + 7 - bit);
+        sq.x = zoom_scale * (i % DISPLAY_WIDTH);
         if (SDL_FillRect(AppSurface, &sq, 0xFFFFFFFF)) {
           std::cerr << SDL_GetError() << "\n";
         }
@@ -172,7 +173,8 @@ void Platform::DrawCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour) {
   }
 }
 
-void Platform::DrawFilledCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour) {
+void Platform::DrawFilledCircle(int16_t x0, int16_t y0, uint8_t r, 
+    uint8_t colour) {
 
   SetColour(colour);
 
@@ -250,7 +252,7 @@ void Platform::DebugPrint(const uint8_t* text) {
   
 
 // TODO: EEPROM
-uint8_t Platform::ToEEPROM(uint8_t *bytes, int offset, int sz) {
+SavedState Platform::ToEEPROM(uint8_t *bytes, int offset, uint16_t sz) {
 
   if (offset < 0) {
     return WrongOffset;
@@ -266,7 +268,7 @@ uint8_t Platform::ToEEPROM(uint8_t *bytes, int offset, int sz) {
   return Saved;
 }
 
-uint8_t Platform::FromEEPROM(uint8_t *bytes, int offset, int sz) {
+SavedState Platform::FromEEPROM(uint8_t *bytes, int offset, uint16_t sz) {
   int getFrom = offset + EEPROM_STORAGE_SPACE_START;
 
   if (getFrom < 0) {
@@ -324,9 +326,18 @@ int main(int argc, char* argv[])
   uint32_t i; // For displaying surface values
   uint16_t pixel; // Setting a random pixel in sBuffer
 #endif
+  zoom_scale = ZOOM_SCALE;
+  if (argc == 2) {
+    zoom_scale = atoi(argv[1]);
+    if ((zoom_scale < 1) || (zoom_scale > 8)) {
+      zoom_scale = ZOOM_SCALE;
+      std::cerr << "Zoom must be between 1 and 8" << "\n"; 
+    }
+  }
+
   SDL_Init(SDL_INIT_VIDEO);
 
-  SDL_CreateWindowAndRenderer(DISPLAY_WIDTH * ZOOM_SCALE, DISPLAY_HEIGHT * ZOOM_SCALE,
+  SDL_CreateWindowAndRenderer(DISPLAY_WIDTH * zoom_scale, DISPLAY_HEIGHT * zoom_scale,
       SDL_WINDOW_RESIZABLE, &AppWindow, &AppRenderer);
   SDL_RenderSetLogicalSize(AppRenderer, DISPLAY_WIDTH, DISPLAY_HEIGHT);
   AppSurface = SDL_GetWindowSurface(AppWindow);

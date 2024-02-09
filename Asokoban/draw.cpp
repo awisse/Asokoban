@@ -115,7 +115,7 @@ void DrawStars(uint8_t set) {
   }
 }
 
-void DrawResult(const uint8_t* text, const uint8_t row, const uint16_t level, const uint16_t moves, const uint32_t elapsed) {
+void DrawResult(const uint8_t* text, const uint8_t row, const uint16_t level, const uint16_t moves, const uint16_t elapsed) {
   /* Draw a box in the middle of the screen with :
      Text on top
      Pas: xxx
@@ -198,7 +198,7 @@ void DrawMenuStars(uint8_t x, uint8_t y, uint16_t seconds) {
   uint8_t i;
 
   for (i=0; i < 4; i++) {
-    if (seconds < (4 - i) * STAR_STEP / 1000) {
+    if (seconds < (4 - i) * STAR_STEP) {
       Platform::DrawFilledCircle(x + 3 + 6 * i, y + 2, 2, COLOUR_WHITE);
     } else {
       Platform::DrawCircle(x + 3 + 6 * i, y + 2, 2, COLOUR_WHITE);

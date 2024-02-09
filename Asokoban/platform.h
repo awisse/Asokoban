@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include "defines.h"
+#include "globals.h"
 
 class Platform
 {
@@ -25,8 +26,8 @@ public:
   static unsigned long Millis();
 
   // EEPROM
-  static uint8_t ToEEPROM(uint8_t *bytes, int offset, int length);
-  static uint8_t FromEEPROM(uint8_t *bytes, int offset, int length);
+  static SavedState ToEEPROM(uint8_t *bytes, int offset, uint16_t length);
+  static SavedState FromEEPROM(uint8_t *bytes, int offset, uint16_t length);
 	/* static void PlaySound(const uint16_t* audioPattern); */
 	/* static bool IsAudioEnabled(); */
 	/* static void SetAudioEnabled(bool isEnabled); */

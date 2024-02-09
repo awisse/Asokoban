@@ -1,4 +1,5 @@
 #include <Arduboy2.h>
+#include <EEPROM.h>
 #include "game.h"
 #include "controller.h"
 #include "defines.h"
@@ -79,6 +80,40 @@ void Platform::Clear() {
 
 unsigned long Platform::Millis() {
   return millis();
+}
+
+#define EEP(x) EEPROM[EEPROM_STORAGE_SPACE_START + x]
+
+SavedState Platform::ToEEPROM(uint8_t *bytes, int offset, uint16_t sz) {
+  int i;
+  if (offset < 0) {
+    return WrongOffset;
+  }
+  if (EEPROM_STORAGE_SPACE_START + offset + sz > EEPROM.length()) {
+    return TooBig;
+  }
+  // Write Game to EEPROM
+
+  for (i = 0; i < sz; i++) {
+    EEP(i + offset) = bytes[i];
+  }
+  return Saved;
+}
+
+SavedState Platform::FromEEPROM(uint8_t *bytes, int offset, uint16_t sz) {
+  // Get Game from EEPROM
+  int i = EEPROM_STORAGE_SPACE_START + offset;
+  if (i < 0) {
+    return WrongOffset;
+  }
+  if (i + sz > EEPROM.length()) {
+    return TooBig; // Can't read from here
+  }
+
+  for (i = 0; i < sz; i++) {
+    bytes[i] = EEP(i + offset);
+  }
+  return Saved;
 }
 
 #ifdef _DEBUG

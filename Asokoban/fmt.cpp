@@ -19,8 +19,9 @@ void FmtMMSS(uint16_t seconds, uint8_t* str, bool leading_zero) {
 
   uint_to_str(str, &position, mm);
   if (leading_zero && (position == 1)) {
-    str[position + 1] = str[position];
-    str[position++] = '0';
+    str[1] = str[0];
+    str[0] = '0';
+    position++;
   }
   str[position++] = ':';
 
@@ -33,20 +34,16 @@ void FmtMMSS(uint16_t seconds, uint8_t* str, bool leading_zero) {
   str[position + 2] = 0;
 }
 
-void FmtTime(uint32_t ms, uint8_t* str) {
+void FmtTime(uint16_t seconds, uint8_t* str) {
   /* Format milliseconds (ms) into minutes:seconds.decisecond
      Max length of str: 1:2:2.1 = 10 characters. */
-  uint16_t seconds;
   uint8_t hours, l=0;
 
-  // More than 99 hours?? Come on ...
-  if (ms > 359999999) ms = 359999999;
-
-  hours = ms / 3600000;
+  hours = seconds / 3600;
   uint_to_str(str, &l, hours);
   str[l] = ':';
 
-  seconds = (ms % 3600000) / 1000;
+  seconds = seconds % 3600;
 
   FmtMMSS(seconds, str + l + 1, true);
 }
