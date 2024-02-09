@@ -84,7 +84,9 @@ void Draw1MenuItem(uint8_t x, uint8_t y, uint16_t level, uint16_t result, bool s
   } else {
     Platform::DrawRect(x, y, 32, 32);
   }
-  DrawMenuStars(x + 3, y + 5, result);
+  if (result > 0) {
+    DrawMenuStars(x + 3, y + 5, result);
+  }
   if (level > 9) {
     level_digits++;
   }
@@ -93,10 +95,11 @@ void Draw1MenuItem(uint8_t x, uint8_t y, uint16_t level, uint16_t result, bool s
   }
 
   font.PrintInt(level, x + (32 - level_digits * FONT_WIDTH) / 2, y + 13);
-  FmtMMSS(result, tm_str, false);
-  uint8_t tm_offset = result < 600 ? 9 : 4;
-  font.PrintString(tm_str, x + tm_offset, y + 22);
-
+  if (result > 0) {
+    FmtMMSS(result, tm_str, false);
+    uint8_t tm_offset = result < 600 ? 9 : 4;
+    font.PrintString(tm_str, x + tm_offset, y + 22);
+  }
 }
 
 void DrawStars(uint8_t set) {

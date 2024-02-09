@@ -93,6 +93,7 @@ void HandleInput() {
   if (BButtonDown && (Platform::Millis() - startBPress) > LONG_PRESS) {
     startBPress = Platform::Millis();
     BButtonLongPressCycles++;
+    Dispatch(Long_B);
   }
 
   uint8_t buttons = DebouncedButtons();

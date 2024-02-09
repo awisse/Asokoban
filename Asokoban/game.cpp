@@ -28,6 +28,7 @@ uint8_t BoxCount; // How many boxes not on target
 // Functions
 void FindLevel();
 void LoadLevel();
+void DoMenu();
 void Success();
 void GameOver();
 
@@ -73,13 +74,14 @@ void RestartLevel() {
 }
 
 void Terminate() {
+  // Different from menu. Needs long press.
   if (state == running) {
-    LoadLevel();
+    DoMenu();
   }
 }
 
 void NextLevel() {
-  if (state == success) {
+  if ((state == success) && (GameState.level < MAX_LEVELS)) {
     GameState.level++;
     LoadLevel();
   }
@@ -91,17 +93,17 @@ void SelectLevel() {
   }
 }
 
-#include "results.h"
 void LoadGame() {
+  uint16_t i;
   // TODO: Load data for display of results.
   // For now: Delete result array
-  for (uint16_t i=0; i<MAX_LEVELS; i++) {
-    results[i] = Results[i];
+  for (i = 0; i<MAX_LEVELS; i++) {
+    results[i] = 0;
   }
   GameState.level = 1;
-  GameState.max_level = MAX_LEVELS;
+  GameState.max_level = 1;
   GameState.level_ix = 0;
-  best_time = 0; // This is what we are loading
+  best_time = 0xFFFFFFFF; // This is what we are loading
 
 }
 
@@ -111,11 +113,15 @@ void SaveGame() {
   Platform::DebugPrint((uint8_t*)"Saving game ... TODO!!");
 }
 
+void DoMenu() {
+  DrawMenu(GameState.level, results);
+  state = menu;
+}
+
 void Menu() {
   // Display the menu at GameState.level
   if ((state == success) || (state == over)) {
-    DrawMenu(GameState.level, results);
-    state = menu;
+    DoMenu();
   }
 }
 
@@ -227,16 +233,22 @@ void Success () {
 
   // Update time
   if (elapsed < best_time) {
+    if (elapsed > 0xFFFF * 1000) {
+      elapsed = 0xFFFF * 1000;
+    }
     best_time = elapsed;
+    results[GameState.level - 1] = elapsed / 1000;
   }
 
   // Update highest succeeded level
-  if (GameState.level > GameState.max_level) {
-    GameState.max_level = GameState.level;
+  if ((GameState.level == GameState.max_level) && 
+      (GameState.max_level < MAX_LEVELS)) {
+    GameState.max_level++;
+  } else if (GameState.level == MAX_LEVELS) {
+    // Game is finished !!!
+    // TODO: Big party !!!
   }
   saved = false;
-  state = success;
-
 }
 
 // vim:fdm=syntax:tabstop=2:softtabstop=2:shiftwidth=2:expandtab
