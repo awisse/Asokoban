@@ -10,3 +10,14 @@ Nothing new. A working implementation for the Arduboy exists already and can be 
 
 The same game can be played as an Arduboy simulation on the desktop 
 with the [SDL2 library](https://github.com/libsdl-org/SDL/tree/SDL2) if installed.
+
+## Desktop Version
+
+To compile for the desktop version:
+ ``` 
+  cd Desktop
+  make
+```
+Then run `./ardusdl`.
+
+The desktop version creates the EEPROM.bin save file in $HOME/tmp. So in order to play, execute `mkdir -p $HOME/tmp` first.
