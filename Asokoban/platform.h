@@ -26,8 +26,10 @@ public:
   static unsigned long Millis();
 
   // EEPROM
-  static SavedState ToEEPROM(uint8_t *bytes, int offset, uint16_t length);
-  static SavedState FromEEPROM(uint8_t *bytes, int offset, uint16_t length);
+  static SavedState ToEEPROM(const uint8_t *bytes, const uint16_t offset,
+      const uint16_t sz);
+  static SavedState FromEEPROM(uint8_t *bytes, const uint16_t offset,
+      const uint16_t length);
 	/* static void PlaySound(const uint16_t* audioPattern); */
 	/* static bool IsAudioEnabled(); */
 	/* static void SetAudioEnabled(bool isEnabled); */

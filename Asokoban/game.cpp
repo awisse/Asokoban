@@ -217,7 +217,7 @@ void Success () {
   }
 
   // Update highest succeeded level
-  if ((GameState.level == GameState.max_level) && 
+  if ((GameState.level == GameState.max_level) &&
       (GameState.max_level < MAX_LEVELS)) {
     GameState.max_level++;
   } else if (GameState.level == MAX_LEVELS) {

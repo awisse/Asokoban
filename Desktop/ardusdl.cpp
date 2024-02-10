@@ -173,7 +173,7 @@ void Platform::DrawCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t colour) {
   }
 }
 
-void Platform::DrawFilledCircle(int16_t x0, int16_t y0, uint8_t r, 
+void Platform::DrawFilledCircle(int16_t x0, int16_t y0, uint8_t r,
     uint8_t colour) {
 
   SetColour(colour);
@@ -249,10 +249,11 @@ void Platform::DebugPrint(const uint8_t* text) {
   std::cout << text << "\n";
 }
 #endif
-  
+
 
 // TODO: EEPROM
-SavedState Platform::ToEEPROM(uint8_t *bytes, int offset, uint16_t sz) {
+SavedState Platform::ToEEPROM(const uint8_t *bytes,
+    const uint16_t offset, const uint16_t sz) {
 
   if (offset < 0) {
     return WrongOffset;
@@ -268,7 +269,8 @@ SavedState Platform::ToEEPROM(uint8_t *bytes, int offset, uint16_t sz) {
   return Saved;
 }
 
-SavedState Platform::FromEEPROM(uint8_t *bytes, int offset, uint16_t sz) {
+SavedState Platform::FromEEPROM(uint8_t *bytes, const uint16_t offset,
+    const uint16_t sz) {
   int getFrom = offset + EEPROM_STORAGE_SPACE_START;
 
   if (getFrom < 0) {
@@ -331,7 +333,7 @@ int main(int argc, char* argv[])
     zoom_scale = atoi(argv[1]);
     if ((zoom_scale < 1) || (zoom_scale > 8)) {
       zoom_scale = ZOOM_SCALE;
-      std::cerr << "Zoom must be between 1 and 8" << "\n"; 
+      std::cerr << "Zoom must be between 1 and 8" << "\n";
     }
   }
 

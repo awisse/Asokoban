@@ -70,6 +70,12 @@ typedef struct {
   uint16_t level_ix;  // Index of level in Levels
 } GameStateStruct;
 
+
+// Signature of saved data in EEPROM
+constexpr uint8_t signature[] = "ASOK";
+// Number of bytes used in EEPROM
+constexpr uint16_t eeprom_sz = 6 + 2 * MAX_LEVELS;
+
 extern State state;
 extern Player worker;
 extern Piece board[HDIM][VDIM];

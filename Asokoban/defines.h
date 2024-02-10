@@ -15,7 +15,7 @@
 //#define pgm_read_ptr pgm_read_word
 #endif
 
-#define _DEBUG
+//#define _DEBUG
 
 // Conversions
 #define U8 (uint8_t*)
@@ -47,4 +47,4 @@
 // Time
 #define LONG_PRESS 2000
 // To obtain reward stars
-#define STAR_STEP 30
+#define STAR_STEP 15
